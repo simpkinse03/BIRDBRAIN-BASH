@@ -131,6 +131,15 @@ public class ScoreManager : MonoBehaviour
             StartCoroutine(PlaySounds(true));
             CheckWinSet(true);
         }
+        // if the ball hits the antenna (or does not go between them), then the other side scores
+        else if (collision.gameObject.CompareTag("Antenna") && inPlay)
+        {
+            // find the side of the player who last hit the ball from the game manager
+            GameObject lastHitPlayer = GameManager.Instance.lastHit;
+            if (lastHitPlayer == GameManager.Instance.leftPlayer1 || lastHitPlayer == GameManager.Instance.leftPlayer2)
+                ScorePoint(true);
+            else ScorePoint(false);
+        }
 
         // ducky: If ball goes out, run coroutine in case out collision was registered before court collision
         else if (collision.gameObject.CompareTag("Out"))
@@ -428,5 +437,27 @@ public class ScoreManager : MonoBehaviour
 
         // Everyone is ready, go back to main menu
         SceneManager.LoadScene("MainMenu");
+    }
+
+    private void ScorePoint(bool leftSideScored)
+    {
+        if (leftSideScored)
+        {
+            side1Score += 1;
+            side1ScoreUI.text = side1Score.ToString();
+            Debug.Log("side 1 scored! points: " + side1Score);
+            LeftScored.Invoke();
+            StartCoroutine(PlaySounds(true));
+            CheckWinSet(true);
+        }
+        else
+        {
+            side2Score += 1;
+            side2ScoreUI.text = side2Score.ToString();
+            Debug.Log("side 2 scored! points: " + side2Score);
+            RightScored.Invoke();
+            StartCoroutine(PlaySounds(false));
+            CheckWinSet(false);
+        }
     }
 }

@@ -64,6 +64,16 @@ public class BallManager : MonoBehaviour
             unblockableOwner = null;
             Debug.Log("BallManager: cleared unblockable spike owner after collision.");
         }
+
+        // Visualization of the spot where the ball hit the ground
+        if (other.collider.CompareTag("Side1") || other.collider.CompareTag("Side2") || other.collider.CompareTag("Out"))
+        {
+            GameObject landingIndicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            landingIndicator.transform.position = new Vector3(other.contacts[0].point.x, 0.01f, other.contacts[0].point.z);
+            landingIndicator.transform.localScale = new Vector3(0.2f, 0.01f, 0.2f);
+            landingIndicator.GetComponent<Renderer>().material.color = Color.red;
+            Destroy(landingIndicator, 2.0f);
+        }
     }
 
     // ducky: Add additional spike speed to base speed of ball
